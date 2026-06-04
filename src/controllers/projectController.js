@@ -147,8 +147,15 @@ exports.approveProject = async (req, res) => {
 exports.uploadImages = async (req, res) => {
   try {
     if (!req.files?.length) return res.status(400).json({ success: false, message: 'No images uploaded.' });
-    const images = req.files.map((f, i) => ({ url: f.path, publicId: f.filename, isPrimary: i === 0 }));
-    const project = await Project.findByIdAndUpdate(req.params.id, { $push: { images: { $each: images } }, $set: { coverImage: images[0].url } }, { new: true });
+    const images = req.files.map((f, i) => ({
+      url: `data:${f.mimetype};base64,${f.buffer.toString('base64')}`,
+      isPrimary: i === 0,
+    }));
+    const project = await Project.findByIdAndUpdate(
+      req.params.id,
+      { $push: { images: { $each: images } }, $set: { coverImage: images[0].url } },
+      { new: true }
+    );
     res.json({ success: true, message: 'Images uploaded!', images, project });
   } catch (err) {
     res.status(500).json({ success: false, message: err.message });
