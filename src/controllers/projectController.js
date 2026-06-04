@@ -147,8 +147,9 @@ exports.approveProject = async (req, res) => {
 exports.uploadImages = async (req, res) => {
   try {
     if (!req.files?.length) return res.status(400).json({ success: false, message: 'No images uploaded.' });
+    const baseUrl = `${req.protocol}://${req.get('host')}`;
     const images = req.files.map((f, i) => ({
-      url: `data:${f.mimetype};base64,${f.buffer.toString('base64')}`,
+      url: `${baseUrl}/uploads/${f.filename}`,
       isPrimary: i === 0,
     }));
     const project = await Project.findByIdAndUpdate(
