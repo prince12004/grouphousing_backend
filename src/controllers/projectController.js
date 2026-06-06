@@ -148,17 +148,33 @@ exports.uploadImages = async (req, res) => {
   try {
     if (!req.files?.length) return res.status(400).json({ success: false, message: 'No images uploaded.' });
 
+    const fs = require('fs');
+    const path = require('path');
+    const uploadsDir = path.join(__dirname, '../../public/uploads');
+    const isReplace = req.query.replace === 'true';
+
+    // First batch: delete old files and replace
+    if (isReplace) {
+      const existing = await Project.findById(req.params.id).select('images');
+      if (existing?.images?.length) {
+        for (const img of existing.images) {
+          try {
+            const filename = img.url?.split('/uploads/').pop();
+            if (filename) fs.unlinkSync(path.join(uploadsDir, filename));
+          } catch (_) {}
+        }
+      }
+    }
+
     const baseUrl = `${req.protocol}://${req.get('host')}`;
     const images = req.files.map((f, i) => ({
       url: `${baseUrl}/uploads/${f.filename}`,
       isPrimary: i === 0,
     }));
 
-    const existing = await Project.findById(req.params.id).select('images coverImage');
-    const isFirst = !existing?.images?.length;
-
-    const update = { $push: { images: { $each: images } } };
-    if (isFirst) update.$set = { coverImage: images[0].url };
+    const update = isReplace
+      ? { $set: { images, coverImage: images[0].url } }
+      : { $push: { images: { $each: images } } };
 
     const project = await Project.findByIdAndUpdate(req.params.id, update, { new: true });
     res.json({ success: true, message: 'Images uploaded!', images, project });
