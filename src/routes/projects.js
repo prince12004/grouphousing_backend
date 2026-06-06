@@ -15,6 +15,6 @@ router.post('/', protect, adminOnly, createProject);
 router.put('/:id', protect, adminOnly, updateProject);
 router.delete('/:id', protect, adminOnly, deleteProject);
 router.patch('/:id/approve', protect, adminOnly, approveProject);
-router.post('/:id/images', protect, adminOnly, upload.array('images', 10), uploadImages);
+router.post('/:id/images', protect, adminOnly, upload.array('images', 100), uploadImages);
 
 module.exports = router;
