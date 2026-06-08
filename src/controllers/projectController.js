@@ -117,7 +117,12 @@ exports.createProject = async (req, res) => {
 
 exports.updateProject = async (req, res) => {
   try {
-    const project = await Project.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true });
+    // Use $set explicitly so images/documents/other unspecified fields are never cleared
+    const project = await Project.findByIdAndUpdate(
+      req.params.id,
+      { $set: req.body },
+      { new: true, runValidators: true }
+    );
     if (!project) return res.status(404).json({ success: false, message: 'Not found.' });
     res.json({ success: true, message: 'Project updated!', project });
   } catch (err) {
