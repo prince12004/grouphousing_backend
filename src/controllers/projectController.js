@@ -1,6 +1,7 @@
 const Project = require('../models/Project');
 const Review = require('../models/Review');
 const { paginate } = require('../utils/helpers');
+const { cloudinary } = require('../config/cloudinary');
 
 exports.getProjects = async (req, res) => {
   try {
@@ -165,25 +166,20 @@ exports.uploadImages = async (req, res) => {
   try {
     if (!req.files?.length) return res.status(400).json({ success: false, message: 'No images uploaded.' });
 
-    const fs = require('fs');
-    const path = require('path');
-    const uploadsDir = path.join(__dirname, '../../public/uploads');
     const isReplace = req.query.replace === 'true';
-
     const existing = await Project.findById(req.params.id).select('images coverImage');
 
     if (isReplace && existing?.images?.length) {
       for (const img of existing.images) {
         try {
-          const filename = img.url?.split('/uploads/').pop();
-          if (filename) fs.unlinkSync(path.join(uploadsDir, filename));
+          if (img.publicId) await cloudinary.uploader.destroy(img.publicId);
         } catch (_) { }
       }
     }
 
-    const baseUrl = `${req.protocol}://${req.get('host')}`;
     const images = req.files.map((f, i) => ({
-      url: `${baseUrl}/uploads/${f.filename}`,
+      url: f.path,
+      publicId: f.filename,
       isPrimary: i === 0,
     }));
 
@@ -191,7 +187,6 @@ exports.uploadImages = async (req, res) => {
     if (isReplace) {
       update = { $set: { images, coverImage: images[0].url } };
     } else {
-      // Append new images; set coverImage too if not already set
       update = !existing?.coverImage
         ? { $push: { images: { $each: images } }, $set: { coverImage: images[0].url } }
         : { $push: { images: { $each: images } } };
@@ -211,13 +206,8 @@ exports.deleteImage = async (req, res) => {
     if (!project) return res.status(404).json({ success: false, message: 'Not found.' });
 
     const image = project.images.find(img => img._id?.toString() === imageId);
-    if (image?.url) {
-      const fs = require('fs');
-      const path = require('path');
-      const filename = image.url.split('/uploads/').pop();
-      if (filename) {
-        try { require('fs').unlinkSync(require('path').join(__dirname, '../../public/uploads', filename)); } catch (_) { }
-      }
+    if (image?.publicId) {
+      try { await cloudinary.uploader.destroy(image.publicId); } catch (_) { }
     }
 
     const updated = await Project.findByIdAndUpdate(
