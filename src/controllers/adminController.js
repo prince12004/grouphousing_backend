@@ -176,12 +176,22 @@ exports.getSettings = async (req, res) => {
 
 exports.updateSettings = async (req, res) => {
   try {
-    let settings = await Settings.findOne();
-    if (!settings) settings = await Settings.create(req.body);
-    else Object.assign(settings, req.body);
-    await settings.save();
+    const settings = await Settings.findOneAndUpdate(
+      {},
+      { $set: req.body },
+      { new: true, upsert: true, setDefaultsOnInsert: true }
+    );
     res.json({ success: true, settings });
   } catch (err) {
     res.status(500).json({ success: false, message: err.message });
+  }
+};
+
+exports.getPublicSettings = async (req, res) => {
+  try {
+    const settings = await Settings.findOne().select('siteName tagline contact social');
+    res.json({ success: true, settings: settings || {} });
+  } catch (err) {
+    res.status(500).json({ success: false });
   }
 };

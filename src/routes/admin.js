@@ -2,12 +2,14 @@ const express = require('express');
 const router = express.Router();
 const { getDashboardStats, getAllUsers, updateUser, deleteUser, toggleUserStatus,
   getTestimonials, createTestimonial, updateTestimonial, deleteTestimonial,
-  getFAQs, createFAQ, updateFAQ, deleteFAQ, getSettings, updateSettings } = require('../controllers/adminController');
+  getFAQs, createFAQ, updateFAQ, deleteFAQ, getSettings, updateSettings,
+  getPublicSettings } = require('../controllers/adminController');
 const { protect, adminOnly } = require('../middleware/auth');
 
-// Public read endpoints — home page sections use these without auth
+// Public read endpoints — no auth required
 router.get('/testimonials', getTestimonials);
 router.get('/faqs', getFAQs);
+router.get('/settings/public', getPublicSettings);
 
 // All routes below require admin authentication
 router.use(protect, adminOnly);

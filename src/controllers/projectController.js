@@ -183,6 +183,33 @@ exports.uploadImages = async (req, res) => {
   }
 };
 
+exports.deleteImage = async (req, res) => {
+  try {
+    const { id, imageId } = req.params;
+    const project = await Project.findById(id);
+    if (!project) return res.status(404).json({ success: false, message: 'Not found.' });
+
+    const image = project.images.find(img => img._id?.toString() === imageId);
+    if (image?.url) {
+      const fs = require('fs');
+      const path = require('path');
+      const filename = image.url.split('/uploads/').pop();
+      if (filename) {
+        try { require('fs').unlinkSync(require('path').join(__dirname, '../../public/uploads', filename)); } catch (_) {}
+      }
+    }
+
+    const updated = await Project.findByIdAndUpdate(
+      id,
+      { $pull: { images: { _id: imageId } } },
+      { new: true }
+    );
+    res.json({ success: true, project: updated });
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message });
+  }
+};
+
 exports.getAllProjectsAdmin = async (req, res) => {
   try {
     const { page = 1, limit = 20, status, approvalStatus, search } = req.query;
