@@ -79,6 +79,18 @@ exports.getFeaturedProjects = async (req, res) => {
   }
 };
 
+exports.getPublicStats = async (req, res) => {
+  try {
+    const projects = await Project.find({ approvalStatus: 'approved' }).select('slots');
+    const totalProjects  = projects.length;
+    const totalUnits     = projects.reduce((s, p) => s + (p.slots?.total     || 0), 0);
+    const availableUnits = projects.reduce((s, p) => s + (p.slots?.available || 0), 0);
+    res.json({ success: true, stats: { totalProjects, totalUnits, availableUnits } });
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message });
+  }
+};
+
 exports.getCities = async (req, res) => {
   try {
     const cities = await Project.distinct('location.city', { approvalStatus: 'approved' });
