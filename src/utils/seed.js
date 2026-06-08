@@ -14,7 +14,7 @@ const seed = async () => {
   // Create admin user
   const existingAdmin = await User.findOne({ email: 'admin@grouphousingpro.com' });
   if (!existingAdmin) {
-    await User.create({ fullName: 'Admin User', email: 'admin@grouphousingpro.com', mobile: '9999999999', password: 'Admin@123', role: 'superadmin', isVerified: true, isActive: true });
+    await User.create({ fullName: 'Admin User', email: 'admin@grouphousingpro.com', mobile: '8050543901', password: 'Admin@123', role: 'superadmin', isVerified: true, isActive: true });
     console.log('✅ Admin user created: admin@grouphousingpro.com / Admin@123');
   }
 
@@ -136,7 +136,7 @@ const seed = async () => {
   // Seed Settings
   const settingsCount = await Settings.countDocuments();
   if (settingsCount === 0) {
-    await Settings.create({ siteName: 'GroupHousing Pro', tagline: 'Creating Dreams Together', email: 'info@grouphousingpro.com', phone: '+91 99999 99999', whatsappNumber: '+919999999999' });
+    await Settings.create({ siteName: 'GroupHousing Pro', tagline: 'Creating Dreams Together', email: 'info@grouphousingpro.com', phone: '+91 8050543901', whatsappNumber: '+918050543901' });
     console.log('✅ Settings seeded');
   }
 
