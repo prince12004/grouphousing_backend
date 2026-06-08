@@ -1,7 +1,7 @@
 const { Resend } = require('resend');
 
 const resend = new Resend(process.env.RESEND_API_KEY);
-const FROM   = `${process.env.FROM_NAME} <${process.env.FROM_EMAIL}>`;
+const FROM = `${process.env.FROM_NAME} <${process.env.FROM_EMAIL}>`;
 
 const sendEmail = async ({ to, subject, html }) => {
   try {
@@ -163,9 +163,9 @@ const sendBookingConfirmation = async ({ to, name, projectName, bookingId, amoun
       <tr><td style="background:#F8FAFC;border-radius:14px;padding:20px 24px">
         <p style="color:#0F172A;font-size:13px;font-weight:700;margin:0 0 14px">📌 What happens next?</p>
         <table width="100%" cellpadding="0" cellspacing="0">
-          ${['Our team reviews your booking request','Dedicated relationship manager assigned','Legal & financial documentation shared','Investment confirmation & onboarding'].map((step, i) => `
+          ${['Our team reviews your booking request', 'Dedicated relationship manager assigned', 'Legal & financial documentation shared', 'Investment confirmation & onboarding'].map((step, i) => `
           <tr><td style="padding:6px 0;vertical-align:top">
-            <div style="display:inline-block;width:22px;height:22px;background:linear-gradient(135deg,#0F766E,#14B8A6);border-radius:50%;text-align:center;line-height:22px;color:#fff;font-size:11px;font-weight:700;margin-right:10px;float:left">${i+1}</div>
+            <div style="display:inline-block;width:22px;height:22px;background:linear-gradient(135deg,#0F766E,#14B8A6);border-radius:50%;text-align:center;line-height:22px;color:#fff;font-size:11px;font-weight:700;margin-right:10px;float:left">${i + 1}</div>
             <span style="color:#475569;font-size:13px;line-height:22px;display:block;margin-left:32px">${step}</span>
           </td></tr>`).join('')}
         </table>
@@ -192,7 +192,7 @@ const sendAdminLeadNotification = async ({ projectName, leadName, leadEmail, lea
     <table width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 24px">
       <tr><td style="background:linear-gradient(135deg,#FEF3C7,#FDE68A);border:1px solid #F59E0B;border-radius:14px;padding:18px 24px">
         <p style="color:#92400E;font-size:14px;font-weight:700;margin:0">
-          🔔 &nbsp;New Lead Alert &nbsp;·&nbsp; <span style="color:#B45309">${new Date().toLocaleString('en-IN',{dateStyle:'medium',timeStyle:'short'})}</span>
+          🔔 &nbsp;New Lead Alert &nbsp;·&nbsp; <span style="color:#B45309">${new Date().toLocaleString('en-IN', { dateStyle: 'medium', timeStyle: 'short' })}</span>
         </p>
       </td></tr>
     </table>
@@ -233,7 +233,7 @@ const sendAdminLeadNotification = async ({ projectName, leadName, leadEmail, lea
     <table width="100%" cellpadding="0" cellspacing="0">
       <tr>
         <td style="padding-right:8px">
-          <a href="https://wa.me/${leadMobile?.replace(/\D/g,'')}" style="display:block;text-align:center;background:linear-gradient(135deg,#22C55E,#16A34A);color:#fff;text-decoration:none;font-weight:700;font-size:13px;padding:13px 16px;border-radius:10px">
+          <a href="https://wa.me/${leadMobile?.replace(/\D/g, '')}" style="display:block;text-align:center;background:linear-gradient(135deg,#22C55E,#16A34A);color:#fff;text-decoration:none;font-weight:700;font-size:13px;padding:13px 16px;border-radius:10px">
             💬 WhatsApp
           </a>
         </td>

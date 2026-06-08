@@ -1,6 +1,6 @@
 require('dotenv').config({ path: require('path').join(__dirname, '../../.env') });
 const mongoose = require('mongoose');
-const Project  = require('../models/Project');
+const Project = require('../models/Project');
 
 // Titles of dummy/fake projects to remove
 const DUMMY_TITLES = [
@@ -34,11 +34,11 @@ const REAL_PROJECTS = [
     progress: 100,
     amenities: [
       { name: 'CCTV Surveillance', icon: '📷' },
-      { name: '24/7 Security',     icon: '🔒' },
-      { name: 'Power Backup',      icon: '⚡' },
-      { name: 'Covered Parking',   icon: '🚗' },
-      { name: 'Lift',              icon: '🛗' },
-      { name: 'Landscaping',       icon: '🌳' },
+      { name: '24/7 Security', icon: '🔒' },
+      { name: 'Power Backup', icon: '⚡' },
+      { name: 'Covered Parking', icon: '🚗' },
+      { name: 'Lift', icon: '🛗' },
+      { name: 'Landscaping', icon: '🌳' },
     ],
     highlights: [
       '15 units | 7 available',
@@ -71,11 +71,11 @@ const REAL_PROJECTS = [
     progress: 100,
     amenities: [
       { name: 'CCTV Surveillance', icon: '📷' },
-      { name: '24/7 Security',     icon: '🔒' },
-      { name: 'Power Backup',      icon: '⚡' },
-      { name: 'Covered Parking',   icon: '🚗' },
-      { name: 'Lift',              icon: '🛗' },
-      { name: 'Landscaping',       icon: '🌳' },
+      { name: '24/7 Security', icon: '🔒' },
+      { name: 'Power Backup', icon: '⚡' },
+      { name: 'Covered Parking', icon: '🚗' },
+      { name: 'Lift', icon: '🛗' },
+      { name: 'Landscaping', icon: '🌳' },
     ],
     highlights: [
       '16 units | 6 available',
@@ -108,14 +108,14 @@ const REAL_PROJECTS = [
     slots: { total: 28, available: 6, booked: 22 },
     progress: 30,
     amenities: [
-      { name: 'Infinity Pool',      icon: '🏊' },
-      { name: 'Clubhouse Terrace',  icon: '🏛️' },
-      { name: 'Café',               icon: '☕' },
-      { name: 'Amphitheatre',       icon: '🎭' },
-      { name: 'Indoor Games',       icon: '🎮' },
+      { name: 'Infinity Pool', icon: '🏊' },
+      { name: 'Clubhouse Terrace', icon: '🏛️' },
+      { name: 'Café', icon: '☕' },
+      { name: 'Amphitheatre', icon: '🎭' },
+      { name: 'Indoor Games', icon: '🎮' },
       { name: 'Karaoke / Foosball', icon: '🎤' },
-      { name: '24/7 Security',      icon: '🔒' },
-      { name: 'Guest Room',         icon: '🛏️' },
+      { name: '24/7 Security', icon: '🔒' },
+      { name: 'Guest Room', icon: '🛏️' },
     ],
     highlights: [
       '28 units | 6 available',

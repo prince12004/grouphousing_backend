@@ -10,15 +10,15 @@ exports.getDashboardStats = async (req, res) => {
   try {
     const [totalUsers, totalProjects, totalLeads, totalBookings,
       activeProjects, pendingProjects, newLeadsToday, revenueData] = await Promise.all([
-      User.countDocuments({ role: 'user' }),
-      Project.countDocuments(),
-      Lead.countDocuments(),
-      Booking.countDocuments(),
-      Project.countDocuments({ status: 'Active', approvalStatus: 'approved' }),
-      Project.countDocuments({ approvalStatus: 'pending' }),
-      Lead.countDocuments({ createdAt: { $gte: new Date(new Date().setHours(0, 0, 0, 0)) } }),
-      Booking.aggregate([{ $group: { _id: null, total: { $sum: '$investmentAmount' } } }]),
-    ]);
+        User.countDocuments({ role: 'user' }),
+        Project.countDocuments(),
+        Lead.countDocuments(),
+        Booking.countDocuments(),
+        Project.countDocuments({ status: 'Active', approvalStatus: 'approved' }),
+        Project.countDocuments({ approvalStatus: 'pending' }),
+        Lead.countDocuments({ createdAt: { $gte: new Date(new Date().setHours(0, 0, 0, 0)) } }),
+        Booking.aggregate([{ $group: { _id: null, total: { $sum: '$investmentAmount' } } }]),
+      ]);
 
     const userGrowth = await User.aggregate([
       { $group: { _id: { $dateToString: { format: '%Y-%m', date: '$createdAt' } }, count: { $sum: 1 } } },

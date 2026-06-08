@@ -82,8 +82,8 @@ exports.getFeaturedProjects = async (req, res) => {
 exports.getPublicStats = async (req, res) => {
   try {
     const projects = await Project.find({ approvalStatus: 'approved' }).select('slots');
-    const totalProjects  = projects.length;
-    const totalUnits     = projects.reduce((s, p) => s + (p.slots?.total     || 0), 0);
+    const totalProjects = projects.length;
+    const totalUnits = projects.reduce((s, p) => s + (p.slots?.total || 0), 0);
     const availableUnits = projects.reduce((s, p) => s + (p.slots?.available || 0), 0);
     res.json({ success: true, stats: { totalProjects, totalUnits, availableUnits } });
   } catch (err) {
@@ -170,16 +170,14 @@ exports.uploadImages = async (req, res) => {
     const uploadsDir = path.join(__dirname, '../../public/uploads');
     const isReplace = req.query.replace === 'true';
 
-    // First batch: delete old files and replace
-    if (isReplace) {
-      const existing = await Project.findById(req.params.id).select('images');
-      if (existing?.images?.length) {
-        for (const img of existing.images) {
-          try {
-            const filename = img.url?.split('/uploads/').pop();
-            if (filename) fs.unlinkSync(path.join(uploadsDir, filename));
-          } catch (_) {}
-        }
+    const existing = await Project.findById(req.params.id).select('images coverImage');
+
+    if (isReplace && existing?.images?.length) {
+      for (const img of existing.images) {
+        try {
+          const filename = img.url?.split('/uploads/').pop();
+          if (filename) fs.unlinkSync(path.join(uploadsDir, filename));
+        } catch (_) { }
       }
     }
 
@@ -189,9 +187,15 @@ exports.uploadImages = async (req, res) => {
       isPrimary: i === 0,
     }));
 
-    const update = isReplace
-      ? { $set: { images, coverImage: images[0].url } }
-      : { $push: { images: { $each: images } } };
+    let update;
+    if (isReplace) {
+      update = { $set: { images, coverImage: images[0].url } };
+    } else {
+      // Append new images; set coverImage too if not already set
+      update = !existing?.coverImage
+        ? { $push: { images: { $each: images } }, $set: { coverImage: images[0].url } }
+        : { $push: { images: { $each: images } } };
+    }
 
     const project = await Project.findByIdAndUpdate(req.params.id, update, { new: true });
     res.json({ success: true, message: 'Images uploaded!', images, project });
@@ -212,7 +216,7 @@ exports.deleteImage = async (req, res) => {
       const path = require('path');
       const filename = image.url.split('/uploads/').pop();
       if (filename) {
-        try { require('fs').unlinkSync(require('path').join(__dirname, '../../public/uploads', filename)); } catch (_) {}
+        try { require('fs').unlinkSync(require('path').join(__dirname, '../../public/uploads', filename)); } catch (_) { }
       }
     }
 
