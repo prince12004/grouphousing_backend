@@ -44,10 +44,16 @@ app.use(cors({
 }));
 
 // Rate limiting
-const limiter = rateLimit({ windowMs: 15 * 60 * 1000, max: 200 });
+const limiter = rateLimit({ windowMs: 15 * 60 * 1000, max: 500 });
 app.use('/api/', limiter);
 
-const authLimiter = rateLimit({ windowMs: 15 * 60 * 1000, max: 20 });
+// Auth limiter — only restrict actual login/register, not token refresh or /me
+const authLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 100,
+  message: { success: false, message: 'Too many requests, please try again later.' },
+  skip: (req) => req.path === '/me' || req.path === '/refresh-token' || req.path === '/logout',
+});
 app.use('/api/auth/', authLimiter);
 
 // Body parsing
